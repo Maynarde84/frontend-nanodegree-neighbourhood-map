@@ -5,7 +5,7 @@ var cafes = [{
     lat: -34.838411,
     lng: 138.482782,
 	rating: '7/10',
-    tag: 'whipped',
+    tag: 'coffee',
 	website: 'http://www.whipped.com.au/'
 }, {
     name: "Swedish Tarts Patisserie",
@@ -13,7 +13,7 @@ var cafes = [{
     lat: -34.838920,
     lng: 138.483038,
 	rating: '8/10',
-    tag: 'swedishtarts',
+    tag: 'tarts',
 	website: 'http://www.swedishtarts.com/'
 }, {
 	name: "Cafe Froot",
@@ -21,7 +21,7 @@ var cafes = [{
 	lat: -34.839008,
 	lng: 138.482649,
 	rating: '6.5/10',
-	tag: 'froot',
+	tag: 'bacon',
 	website: null
 }, {
     name: "Sarah's Sisters",
@@ -29,7 +29,7 @@ var cafes = [{
     lat: -34.839532,
     lng: 138.488407,
 	rating: '5/10',
-    tag: 'sarahssisters',
+    tag: 'vegan',
 	website: null
 }, {
     name: "Sully's on Semaphore",
@@ -37,6 +37,6 @@ var cafes = [{
     lat: -34.839790,
     lng: 138.487878,
 	rating: '7/10',
-    tag: 'sullys',
+    tag: 'englishbreakfast',
 	website: 'http://www.sullysonsemaphore.com.au/'
 }];

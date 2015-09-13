@@ -1,7 +1,14 @@
 "use strict";
+//
+var mapZoom;
+if (window.innerWidth > 1250) {
+    mapZoom = 17;
+} else {
+    mapZoom = 14;
+}
 //Centering map on Semaphore Road
 var map = new google.maps.Map(document.getElementById('google_map'), {
-    zoom: 17,
+    zoom: mapZoom,
     center: {
         lat: -34.839602,
         lng: 138.487782
@@ -17,6 +24,7 @@ var Cafe = function(data) {
 	self.tag = ko.observable(data.tag);
 	self.rating = ko.observable(data.rating);
 	self.website = ko.observable(data.website);
+	self.photos  = ko.observableArray();
     self.marker = new google.maps.Marker({
         map: null,
         position: self.latLng(),
@@ -38,7 +46,7 @@ var Cafe = function(data) {
 //Call functions to fill the info window / popup box
 var popupBox = function(cafe) {
 	
-	if (cafe.website() != null) {
+	if (cafe.website() !== null) {
 		return "<div id='popupBox' class='popupBox'>" +
         "<h2 id='popupBoxTitle' class='popupBoxTitle'>" +
         cafe.name() + "</h2>" +
@@ -46,13 +54,18 @@ var popupBox = function(cafe) {
 		cafe.rating() + "</h1>" +
 		"<h1 id='ratingSite' class='ratingSite'><a href=" +
 		cafe.website() + ">Website</h1>" + 
-		"</div>"
+		"<ul></ul>" +
+        "<img width='200' src='" + cafe.photos()[0] + "'/>" +
+        "</div>";
 	} else {
 		return "<div id='popupBox' class='popupBox'>" +
         "<h2 id='popupBoxTitle' class='popupBoxTitle'>" +
         cafe.name() + "</h2>" +
         "<h1 id='ratingSite' class='ratingSite'>Rating: " +
-		cafe.rating() + "</h1></div>"
+		cafe.rating() + "</h1>" +
+		"<ul></ul>" +
+        "<img width='200' src='" + cafe.photos()[0] + "'/>" +
+        "</div>";
 	}
 };
 
@@ -67,8 +80,6 @@ var ViewModel = function() {
 	cafes.forEach(function(cafeInfo) {
         self.cafeLocations.push(new Cafe(cafeInfo));
     });
-	
-	var infowindow = new google.maps.InfoWindow();
 	
     self.filteredCafes = ko.computed(function() {
         var cafeList = [],
@@ -89,10 +100,14 @@ var ViewModel = function() {
         });
     });
 	
+	var infowindow = new google.maps.InfoWindow();
+	
 	//Add this function so the list items are clickable
     self.clickFunction = function(cafe){
 		map.setCenter(cafe.latLng());
         map.setZoom(19);
+		
+		infowindow.close();
                 
        	cafe.marker.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
@@ -100,20 +115,47 @@ var ViewModel = function() {
         }, 700);
 
         //Initialize info window
-        self.infowindow = new google.maps.InfoWindow({
+        infowindow = new google.maps.InfoWindow({
         	maxHeight: 150,
             maxWidth: 200
         });
 
         //Fill info window with info then open
-        self.infowindow.setContent(popupBox(cafe));
-        self.infowindow.open(map, cafe.marker);
+        infowindow.setContent(popupBox(cafe));
+        infowindow.open(map, cafe.marker);
     };
 
-    //Iterate through each coffee shop to add information
+    //Iterate through each cafe to add information
     self.cafeLocations().forEach(function(cafe) {
     	google.maps.event.addListener(cafe.marker, 'click', function() {
         	self.clickFunction(cafe);
+        });
+    });
+	
+	//Call instagram API for a picture feed
+    self.instagramFeed = ko.computed(function() {
+		
+		//Search for photos relevant to each cafe's tag then add to photo array
+        self.cafeLocations().forEach(function(cafe) {
+            var hashtag = cafe.tag();
+            var ID = '3b56880df2594a669fd67cbb0e7da806';
+            var token = '2020752268.79ac5dd.563ec4488ff240fea17f6d6d2d6b5b86';
+            var URLBuild = "https://api.instagram.com/v1/tags/" + hashtag + "/media/recent?client_id=" +
+			"3b56880df2594a669fd67cbb0e7da806&access_token=2020752268.79ac5dd.563ec4488ff240fea17f6d6d2d6b5b86";
+
+            $.ajax({
+                type: "GET",
+                dataType: "jsonp",
+                cache: false,
+                url: URLBuild,
+                success: function(response) {
+                        for (var i = 0; i < 1; i++) {
+                            cafe.photos.push(response.data[i].images.standard_resolution.url);
+                        }
+                    }
+            }).fail(function(response, status, error) {
+                $('#popupTitle').text('Instagram feed could not be loaded');
+            });
         });
     });
 };

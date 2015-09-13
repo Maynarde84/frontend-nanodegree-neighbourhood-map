@@ -10,12 +10,12 @@
         <div class="map" id="google_map"></div>
         <div class="list">
             <div class="search">
-                <h1 class="mainTitle">Sempahore Cafes</h1>
-                <input type="text" data-bind="textInput: searchString" placeholder="Filter Cafe" />
+                <h1 class="maintitle">Sempahore Cafes</h1>
+                <input type="text" data-bind="textInput: searchString" placeholder="Filter Cafe">
             </div>
             <div class="places">
                 <ul data-bind="foreach: filteredCafes">
-                    <li><span data-bind="text: name, click: $parent.clickFunction" /></li>
+                    <li><span data-bind="text: name, click: $parent.clickFunction"></span></li>
                 </ul>
             </div>
         </div>
