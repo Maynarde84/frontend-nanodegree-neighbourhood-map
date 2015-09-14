@@ -43,6 +43,16 @@ var Cafe = function(data) {
     };
 };
 
+var photoSuccess = false;
+
+var photos = function(cafe) {
+	if (photoSuccess) {
+		return "<img width='200' src='" + cafe.photos()[0] + "'/>";
+	} else {
+		return "<h1 id='ratingSite' class='ratingSite'>No image found</h1>";
+	}
+}
+
 //Call functions to fill the info window / popup box
 var popupBox = function(cafe) {
 	
@@ -53,10 +63,9 @@ var popupBox = function(cafe) {
         "<h1 id='ratingSite' class='ratingSite'>Rating: " +
 		cafe.rating() + "</h1>" +
 		"<h1 id='ratingSite' class='ratingSite'><a href=" +
-		cafe.website() + ">Website</h1>" + 
+		cafe.website() + ">Website</a></h1>" + 
 		"<ul></ul>" +
-        "<img width='200' src='" + cafe.photos()[0] + "'/>" +
-        "</div>";
+        photos(cafe) + "</div>";
 	} else {
 		return "<div id='popupBox' class='popupBox'>" +
         "<h2 id='popupBoxTitle' class='popupBoxTitle'>" +
@@ -64,8 +73,7 @@ var popupBox = function(cafe) {
         "<h1 id='ratingSite' class='ratingSite'>Rating: " +
 		cafe.rating() + "</h1>" +
 		"<ul></ul>" +
-        "<img width='200' src='" + cafe.photos()[0] + "'/>" +
-        "</div>";
+        photos(cafe) + "</div>";
 	}
 };
 
@@ -150,11 +158,12 @@ var ViewModel = function() {
                 url: URLBuild,
                 success: function(response) {
                         for (var i = 0; i < 1; i++) {
+							photoSuccess = true;
                             cafe.photos.push(response.data[i].images.standard_resolution.url);
                         }
                     }
             }).fail(function(response, status, error) {
-                $('#popupTitle').text('Instagram feed could not be loaded');
+                photoSuccess = false;
             });
         });
     });
